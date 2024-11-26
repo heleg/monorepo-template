@@ -1,10 +1,15 @@
 import { Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { PassportStrategy } from "@nestjs/passport";
 import { Strategy, type VerifyFunction } from "openid-client/build/passport";
 
 @Injectable()
 export class AwsStrategy extends PassportStrategy(Strategy) {
-  constructor() {
+  constructor(private readonly configService: ConfigService) {
+    const clientID = configService.get<string>("AWS_COGNITO_CLIENT_ID");
+    const clientSecret = configService.get<string>("AWS_COGNITO_CLIENT_SECRET");
+    const callbackURL = configService.get<string>("AWS_COGNITO_REDIRECT_URL");
+
     super({
       issuer: "https://cognito-idp.us-east-1.amazonaws.com",
       authorizationURL:
@@ -12,9 +17,9 @@ export class AwsStrategy extends PassportStrategy(Strategy) {
       tokenURL: "https://cognito-idp.us-east-1.amazonaws.com/oauth2/token",
       userInfoURL:
         "https://cognito-idp.us-east-1.amazonaws.com/oauth2/userInfo",
-      clientID: process.env.AWS_COGNITO_CLIENT_ID,
-      clientSecret: process.env.AWS_COGNITO_CLIENT_SECRET,
-      callbackURL: process.env.AWS_COGNITO_REDIRECT_URL,
+      clientID,
+      clientSecret,
+      callbackURL,
       scope: "openid",
     });
   }
