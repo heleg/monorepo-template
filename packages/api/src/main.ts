@@ -1,5 +1,6 @@
 import { ConfigService } from "@nestjs/config";
 import { NestFactory } from "@nestjs/core";
+import * as cookieParser from "cookie-parser";
 import * as session from "express-session";
 import { AppModule } from "./app.module";
 
@@ -14,12 +15,13 @@ async function bootstrap() {
     throw new Error("COOKIE_SECRET is not set");
   }
 
+  app.use(cookieParser());
   app.use(
     session({
       secret: cookieSecret,
       resave: false,
       saveUninitialized: false,
-    })
+    }),
   );
 
   await app.listen(port);

@@ -1,6 +1,7 @@
 {
   "extends": "@monorepo-template/typescript-config/tsconfig.base.json",
   "compilerOptions": {
+    "lib": ["ES2020", "DOM"],
     "module": "commonjs",
     "moduleResolution": "Node",
     "declaration": true,

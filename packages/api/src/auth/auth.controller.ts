@@ -1,16 +1,18 @@
-import { Controller, Get } from "@nestjs/common";
-import { randomNonce, randomState } from "openid-client";
+import { Controller, Get, Post, Request, UseGuards } from "@nestjs/common";
+import { AuthGuard } from "@nestjs/passport";
 
 @Controller("auth")
 export class AuthController {
   @Get("/me")
-  me(): string {
-    return "Here will be user info";
+  me(@Request() req: Request): string {
+    // @ts-ignore
+    return req.user;
   }
 
-  @Get("/login")
-  login() {
-    const nonce = randomNonce();
-    const state = randomState();
+  @UseGuards(AuthGuard("aws"))
+  @Post("/login")
+  login(@Request() req: Request) {
+    // @ts-ignore
+    return req.user;
   }
 }
