@@ -1,8 +1,3 @@
 node_modules
 .turbo
 servers.json
-
-packages/web/dist
-
-packages/api/dist
-packages/api/build

@@ -3,12 +3,16 @@ import { ConfigService } from "@nestjs/config";
 import { PassportModule } from "@nestjs/passport";
 import { discovery } from "openid-client";
 import { AuthController } from "./auth.controller";
-import { AwsStrategy } from "./aws.strategy";
 
 @Module({
   controllers: [AuthController],
-  imports: [PassportModule],
+  imports: [
+    PassportModule.register({
+      defaultStrategy: "aws",
+    }),
+  ],
   providers: [
+    AwsAuthGuard,
     {
       provide: AwsStrategy,
       useFactory: async (configService: ConfigService) => {
@@ -27,7 +31,12 @@ import { AwsStrategy } from "./aws.strategy";
         const serverUrl = new URL(server);
         const config = await discovery(serverUrl, clientId, clientSecret);
 
-        return new AwsStrategy({ config, scope: "email openid profile" });
+        return new AwsStrategy({
+          config,
+          scope: "email openid profile",
+          callbackURL: "http://localhost:3388/auth/callback",
+          sessionKey: "aws",
+        });
       },
       inject: [ConfigService],
     },
